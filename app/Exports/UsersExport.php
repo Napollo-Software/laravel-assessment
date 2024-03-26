@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\User;
+use App\Models\UserList;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -13,15 +14,17 @@ class UsersExport implements FromCollection,WithHeadings
     */
     public function collection()
     {
-        return User::orderBy('id', 'desc')->take(30)->get(['id', 'name', 'email']);
+        return UserList::orderBy('id', 'desc')->take(10)->get(['id', 'first_name','last_name','job_title', 'address']);
     }
 
     public function headings(): array
     {
         return [
             'ID',
-            'Name',
-            'Email'
+            'First Name',
+            'Last Name',
+            'Job Title',
+            'Address'
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Repositories\User\UserInterface;
 use App\Http\Resources\UserResource;
 use App\Imports\ImportUser;
 use App\Models\User;
+use App\Models\UserList;
 use App\Traits\CommonTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -21,17 +22,21 @@ class UserRepository implements UserInterface
     public function store($request)
     {
         try {
-            $users = Http::get('https://dummyjson.com/users')->json();
+            $users = Http::get('https://61f07509732d93001778ea7d.mockapi.io/api/v1/user/users?page=1&limit=10')->json();
             $data = [];
-            foreach ($users["users"] as $key => $user) {
-                $data[$key]['name'] = $user['firstName'] . ' ' . $user['lastName'];
-                $data[$key]['email'] = $user['email'];
-                $data[$key]['password'] = Hash::make($user['password']);
-                $data[$key]['created_at'] = Carbon::now();
+
+            foreach ($users as $key => $user) {
+                $data[$key]['first_name'] = $user['first_name'];
+                $data[$key]['last_name'] = $user['last_name'];
+                $data[$key]['address'] = $user['address'];
+                $data[$key]['job_title'] = $user['job_title'];
+                $data[$key]['created_at'] = Carbon::make($user['createdAt']);
                 $data[$key]['updated_at'] = Carbon::now();
             }
-            User::insert($data);
-            return Excel::download(new UsersExport(), 'users.csv');
+            UserList::insert($data);
+            $time = (Carbon::now())->addDay()->format('m-d-Y');
+            Excel::store(new UsersExport(), '/public/file/users-'.$time.'.csv');
+            return $this->sendSuccess("success",true);
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage(), null);
         }
