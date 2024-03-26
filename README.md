@@ -11,5 +11,9 @@ The purpose of this test is to gauge your skills in the day-to-day problems.  Fo
 
 Please use this link to fetch all users.  The list is paginated.  There is a max of 10 pages.  This number can be changed by altering the limit query parameter.
 
+# Note
+The user can fetch via the Postman Collection.
+Collection Location: Public/assessment.postman_collection
+
 
 
